@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCloud SIMRS - Front Office</title>
+    <!-- Font Awesome v6 untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Hubungkan ke file CSS eksternal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        
+        <!-- SIDEBAR UTAMA -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>RS Medika Utama</h2>
+                <p>Clinical System</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../front-office/index.html" class="nav-item active"><i class="fa-solid fa-desktop"></i> Front Office</a>
+                <a href="../Nurse_Station/index.html" class="nav-item"><i class="fa-solid fa-user-nurse"></i> Nurse Station</a>
+                <a href="../doctor-emr/index.html" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Doctor EMR</a>
+                <a href="../billing/index.html" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> Billing</a>
+                <a href="../admin/index.html" class="nav-item"><i class="fa-solid fa-user-gear"></i> Admin</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../login/index.html" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- KONTEN UTAMA -->
+        <main class="main-body">
+            
+            <!-- TOP HEADER -->
+            <header class="top-header">
+                <div class="header-left">
+                    <span class="brand-text">MedCloud SIMRS</span>
+                </div>
+                <div class="header-right">
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Cari Pasien atau Menu...">
+                    </div>
+                    <button><i class="fa-regular fa-bell"></i></button>
+                    <button><i class="fa-solid fa-gear"></i></button>
+                    <button><i class="fa-regular fa-circle-question"></i></button>
+                    <div class="user-profile">
+                        <div class="profile-avatar">
+                            <img src="https://via.placeholder.com/35" alt="Admin">
+                        </div>
+                        <div class="user-info">
+                            <strong>Admin Utama</strong>
+                            <span>SUPER ADMIN</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--text-muted); margin-left: 4px;"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTAINER UTAMA -->
+            <div class="content-container">
+                
+                <!-- TITLE BAR -->
+                <div class="content-title-bar">
+                    <div class="title-text">
+                        <h1>Pendaftaran Pasien</h1>
+                        <p>Manajemen antrean dan registrasi pasien poliklinik.</p>
+                    </div>
+                    <div class="action-header-buttons">
+                        <button class="btn btn-outline-blue"><i class="fa-solid fa-arrows-rotate"></i> Bridging BPJS Vclaim</button>
+                        <button class="btn btn-teal"><i class="fa-solid fa-user-plus"></i> Registrasi Pasien Baru</button>
+                    </div>
+                </div>
+
+                <!-- MAIN DASHBOARD GRID -->
+                <div class="main-dashboard-grid">
+                    
+                    <!-- LEFT CONTROLS -->
+                    <div class="left-controls">
+                        
+                        <!-- Search Medical Records Card -->
+                        <div class="card">
+                            <div class="card-title">Quick Search Medical Records (No. RM)</div>
+                            <div class="search-row">
+                                <input type="text" placeholder="Masukkan No. RM...">
+                                <button class="btn-search-action">Cari</button>
+                            </div>
+                        </div>
+
+                        <!-- Statistics Row Card -->
+                        <div class="stats-row">
+                            <div class="stat-box border-purple">
+                                <div class="stat-label">TOTAL PASIEN HARI INI</div>
+                                <div class="stat-value">128</div>
+                            </div>
+                            <div class="stat-box border-blue">
+                                <div class="stat-label">BRIDGING BERHASIL</div>
+                                <div class="stat-value">94%</div>
+                            </div>
+                        </div>
+
+                        <!-- BPJS Vclaim Action Card -->
+                        <div class="card">
+                            <div class="vclaim-card-header">
+                                <span class="vclaim-title">Cek Rujukan & SEP</span>
+                                <span class="tag-connected">TERHUBUNG</span>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 12px;">
+                                <label style="font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">NO. KARTU BPJS</label>
+                                <div class="vclaim-input-wrapper">
+                                    <input type="text" value="000123456789">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                            </div>
+                            <button class="btn-block-blue">Terbitkan SEP Baru</button>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT TABLE & LIST -->
+                    <div class="right-list-container">
+                        
+                        <div class="table-filter-header">
+                            <h3>Daftar Antrean Hari Ini</h3>
+                            <select class="select-filter">
+                                <option>Semua Poliklinik</option>
+                            </select>
+                        </div>
+
+                        <!-- Table -->
+                        <table class="queue-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 100px;">NO. ANTREAN</th>
+                                    <th>PASIEN / RM</th>
+                                    <th>PENJAMIN</th>
+                                    <th>KLINIK / DPJP</th>
+                                    <th>STATUS</th>
+                                    <th style="text-align: center; width: 60px;">AKSI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="queue-id">A–001</td>
+                                    <td class="patient-cell">
+                                        <strong>Budi Santoso</strong>
+                                        <span>RM: 10–22–45</span>
+                                    </td>
+                                    <td><span class="tag-insurance bpjs-pbi">BPJS PBI</span></td>
+                                    <td class="doctor-cell">
+                                        <strong>Poli Jantung</strong>
+                                        <span>dr. Heru Prasetyo, Sp.JP</span>
+                                    </td>
+                                    <td><span class="status-pill waiting">Menunggu di Klinik</span></td>
+                                    <td style="text-align: center;"><button class="btn-edit-action"><i class="fa-regular fa-pen-to-square"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td class="queue-id">A–002</td>
+                                    <td class="patient-cell">
+                                        <strong>Siti Aminah</strong>
+                                        <span>RM: 11–04–12</span>
+                                    </td>
+                                    <td><span class="tag-insurance umum">UMUM</span></td>
+                                    <td class="doctor-cell">
+                                        <strong>Poli Anak</strong>
+                                        <span>dr. Maya Sari, Sp.A</span>
+                                    </td>
+                                    <td><span class="status-pill done">Selesai</span></td>
+                                    <td style="text-align: center;"><button class="btn-edit-action"><i class="fa-regular fa-pen-to-square"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td class="queue-id">A–003</td>
+                                    <td class="patient-cell">
+                                        <strong>Dedi Kurniawan</strong>
+                                        <span>RM: 10–88–21</span>
+                                    </td>
+                                    <td><span class="tag-insurance bpjs-mandiri">BPJS MANDIRI</span></td>
+                                    <td class="doctor-cell">
+                                        <strong>Poli Gigi</strong>
+                                        <span>drg. Anita Wijaya</span>
+                                    </td>
+                                    <td><span class="status-pill waiting">Menunggu di Klinik</span></td>
+                                    <td style="text-align: center;"><button class="btn-edit-action"><i class="fa-regular fa-pen-to-square"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td class="queue-id">A–004</td>
+                                    <td class="patient-cell">
+                                        <strong>Ratna Sari</strong>
+                                        <span>RM: 12–15–33</span>
+                                    </td>
+                                    <td><span class="tag-insurance swasta">ASURANSI SWASTA</span></td>
+                                    <td class="doctor-cell">
+                                        <strong>Poli Mata</strong>
+                                        <span>dr. Bambang, Sp.M</span>
+                                    </td>
+                                    <td><span class="status-pill done">Selesai</span></td>
+                                    <td style="text-align: center;"><button class="btn-edit-action"><i class="fa-regular fa-pen-to-square"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        <div class="pagination-row">
+                            <span style="color: var(--text-muted); font-size: 12px;">Menampilkan 1-4 dari 48 antrean</span>
+                            <div class="pagination-pages">
+                                <button class="btn-page">Sebelumnya</button>
+                                <button class="btn-page active">1</button>
+                                <button class="btn-page">2</button>
+                                <button class="btn-page">Berikutnya</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- BOTTOM INTEGRATION STATUS ROW -->
+                <div class="bottom-integration-row">
+                    <div class="integration-card border-green">
+                        <div class="int-icon green"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <div class="int-details">
+                            <h4>SATUSEHAT</h4>
+                            <p>INTEGRATION STATUS: <span class="text-green">VERIFIKASI</span></p>
+                        </div>
+                    </div>
+                    <div class="integration-card border-blue">
+                        <div class="int-icon blue"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div class="int-details">
+                            <h4>BPJS KESEHATAN</h4>
+                            <p>API BRIDGING: <span class="text-blue">ONLINE</span></p>
+                        </div>
+                    </div>
+                    <div class="integration-card border-purple">
+                        <div class="int-icon purple"><i class="fa-regular fa-calendar-days"></i></div>
+                        <div class="int-details">
+                            <h4>JADWAL DOKTER</h4>
+                            <p>UPDATE TERAKHIR: <strong>08:00 WIB</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Floating action button -->
+    <button class="fab-btn"><i class="fa-solid fa-plus"></i></button>
+
+    <!-- Hubungkan ke file JavaScript eksternal -->
+    <script src="script.js"></script>
+</body>
+</html>

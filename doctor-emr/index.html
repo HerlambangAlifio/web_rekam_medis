@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCloud SIMRS - EMR Dokter</title>
+    <!-- Font Awesome v6 untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Hubungkan ke file CSS eksternal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        
+        <!-- SIDEBAR UTAMA -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>RS Medika Utama</h2>
+                <p>Clinical System</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../front-office/index.html" class="nav-item"><i class="fa-solid fa-desktop"></i> Front Office</a>
+                <a href="../Nurse_Station/index.html" class="nav-item"><i class="fa-solid fa-user-nurse"></i> Nurse Station</a>
+                <a href="../doctor-emr/index.html" class="nav-item active"><i class="fa-solid fa-user-doctor"></i> Doctor EMR</a>
+                <a href="../pharmacy/index.html" class="nav-item"><i class="fa-solid fa-prescription-bottle-medical"></i> Pharmacy</a>
+                <a href="../billing/index.html" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> Billing</a>
+                <a href="../admin/index.html" class="nav-item"><i class="fa-solid fa-user-gear"></i> Admin</a>
+            </nav>
+            
+            <div class="sidebar-bottom-group">
+                <div class="integration-status-box">
+                    <p class="int-title">INTEGRATION</p>
+                    <div class="int-status-item"><span class="dot green"></span> SatuSehat Sync Active</div>
+                    <div class="int-status-item"><span class="dot green"></span> BPJS Connected</div>
+                </div>
+                <a href="../login/index.html" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- AREA KONTEN UTAMA -->
+        <main class="main-body">
+            
+            <!-- TOP HEADER -->
+            <header class="top-header">
+                <div class="header-left">
+                    <span class="brand-text">MedCloud SIMRS</span>
+                    <span class="separator">/</span>
+                    <span class="page-sub-title">EMR Dokter</span>
+                </div>
+                <div class="header-right">
+                    <button class="icon-btn notification-badge"><i class="fa-regular fa-bell"></i></button>
+                    <button class="icon-btn"><i class="fa-solid fa-gear"></i></button>
+                    <button class="icon-btn"><i class="fa-regular fa-circle-question"></i></button>
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <strong>Dr. Sarah Wijaya</strong>
+                            <span>Spesialis Penyakit Dalam</span>
+                        </div>
+                        <div class="profile-avatar">
+                            <img src="https://images.unsplash.com/photo-1594824813573-246434e33963?w=100&auto=format&fit=crop&q=60" alt="Dokter">
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TATA LETAK TIGA KOLOM (Grid Utama) -->
+            <div class="emr-layout-grid">
+                
+                <!-- KOLOM TENGAH: Rekam Medis Pasien Aktif -->
+                <section class="emr-center-panel">
+                    
+                    <!-- Patient Banner Card -->
+                    <div class="patient-banner">
+                        <div class="patient-avatar-box">BS</div>
+                        <div class="patient-primary-details">
+                            <h2>Bambang Susilo (45 Th)</h2>
+                            <div class="patient-sub-details">
+                                <span><i class="fa-solid fa-mars"></i> Laki-laki</span>
+                                <span>No. RM: 2024-00-1592</span>
+                            </div>
+                            <div class="patient-allergy">
+                                <strong>Alergi:</strong> <span class="allergy-text">Parasetamol, Seafood</span>
+                            </div>
+                        </div>
+                        <div class="patient-vitals-grid">
+                            <div class="vital-item">
+                                <span class="vital-label">TD (MMHG)</span>
+                                <span class="vital-value text-teal">120/80</span>
+                            </div>
+                            <div class="vital-item">
+                                <span class="vital-label">NADI (BPM)</span>
+                                <span class="vital-value text-teal">82</span>
+                            </div>
+                            <div class="vital-item">
+                                <span class="vital-label">SUHU (°C)</span>
+                                <span class="vital-value text-teal">36.7</span>
+                            </div>
+                            <div class="vital-item">
+                                <span class="vital-label">SPO2 (%)</span>
+                                <span class="vital-value text-teal">98</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SOAP Documentation Card -->
+                    <div class="card soap-card">
+                        <div class="soap-tabs">
+                            <button class="soap-tab active" data-tab="subjektif">Subjektif</button>
+                            <button class="soap-tab" data-tab="objektif">Objektif</button>
+                            <button class="soap-tab" data-tab="asesmen">Asesmen</button>
+                            <button class="soap-tab" data-tab="plan">Plan</button>
+                        </div>
+                        <div class="soap-content">
+                            <textarea class="soap-textarea" placeholder="Tuliskan catatan medis di sini...">Pasien mengeluh pusing sejak tadi pagi. Leher terasa kaku dan pegal. Tidur kurang nyenyak semalam. Riwayat hipertensi sejak 2 tahun lalu namun kontrol tidak teratur.</textarea>
+                            <div class="template-tags-row">
+                                <span class="template-tag">Templates: ISPA</span>
+                                <span class="template-tag">Templates: Hipertensi</span>
+                                <span class="template-tag">Templates: DM Tipe 2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Diagnosis & Tindakan Dual Grid -->
+                    <div class="dual-code-grid">
+                        <!-- Diagnosis ICD-10 -->
+                        <div class="card code-card">
+                            <div class="code-card-header">
+                                <h3>Diagnosis (ICD-10)</h3>
+                                <button class="add-code-btn"><i class="fa-solid fa-circle-plus"></i></button>
+                            </div>
+                            <div class="code-search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" placeholder="Cari Kode ICD-10...">
+                            </div>
+                            <div class="selected-codes-list">
+                                <div class="code-item">
+                                    <div class="code-details">
+                                        <strong>I10 - Essential (primary) hypertension</strong>
+                                    </div>
+                                    <button class="remove-code-btn"><i class="fa-regular fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tindakan ICD-9 -->
+                        <div class="card code-card">
+                            <div class="code-card-header">
+                                <h3>Tindakan (ICD-9)</h3>
+                                <button class="add-code-btn"><i class="fa-solid fa-circle-plus"></i></button>
+                            </div>
+                            <div class="code-search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" placeholder="Cari Kode ICD-9-CM...">
+                            </div>
+                            <div class="empty-code-placeholder">
+                                Belum ada tindakan dipilih
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- E-Resep Card -->
+                    <div class="card prescription-card">
+                        <div class="prescription-header">
+                            <h3>E-Resep</h3>
+                        </div>
+                        <table class="prescription-table" id="prescriptionTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama Obat</th>
+                                    <th>Signa (Aturan Pakai)</th>
+                                    <th style="width: 80px;">Jumlah</th>
+                                    <th style="width: 40px; text-align: center;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="table-input" value="Amlodipine 5mg Tab"></td>
+                                    <td><input type="text" class="table-input" value="1 × 1 Hari - Sesudah Makan (Pagi)"></td>
+                                    <td><input type="number" class="table-input" value="30"></td>
+                                    <td style="text-align: center;"><button class="btn-delete-row"><i class="fa-solid fa-xmark"></i></button></td>
+                                </tr>
+                                <tr class="row-input-new">
+                                    <td><input type="text" class="table-input" placeholder="Cari obat..."></td>
+                                    <td><input type="text" class="table-input" placeholder="Dosis..."></td>
+                                    <td><input type="number" class="table-input" placeholder=""></td>
+                                    <td style="text-align: center;"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button class="add-med-btn" id="addMedRowBtn"><i class="fa-solid fa-plus"></i> Tambah Obat</button>
+                    </div>
+
+                </section>
+
+                <!-- KOLOM KANAN SIDEBAR: Aksi Penunjang & Finalisasi -->
+                <section class="emr-right-sidebar">
+                    
+                    <!-- Order Pemeriksaan Penunjang -->
+                    <div class="card ancillary-card">
+                        <h3>Pemeriksaan Penunjang</h3>
+                        <div class="ancillary-buttons">
+                            <button class="ancillary-btn">
+                                <div class="ancillary-btn-left">
+                                    <i class="fa-solid fa-microscope"></i>
+                                    <span>Order Lab</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                            </button>
+                            <button class="ancillary-btn">
+                                <div class="ancillary-btn-left">
+                                    <i class="fa-solid fa-calendar-minus"></i>
+                                    <span>Order Radiologi</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Finalisasi Rekam Medis -->
+                    <div class="card finalization-card">
+                        <h3>Finalisasi</h3>
+                        <div class="confirmation-checkbox-wrapper">
+                            <input type="checkbox" id="confirmCheckbox">
+                            <label for="confirmCheckbox">Konfirmasi pemeriksaan telah selesai dan data valid.</label>
+                        </div>
+                        <button class="btn btn-save-emr"><i class="fa-solid fa-floppy-disk"></i> Finalisasi & Simpan EMR</button>
+                        <button class="btn btn-print-emr"><i class="fa-solid fa-print"></i> Cetak Ringkasan Medis</button>
+                    </div>
+
+                    <!-- Catatan Penting Peringatan -->
+                    <div class="card alert-notes-card">
+                        <div class="alert-header">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <h3>Catatan Penting</h3>
+                        </div>
+                        <p class="alert-body-text">
+                            Pasien terdiagnosa Hipertensi Stage 2 pada kunjungan terakhir. Harap perhatikan kepatuhan minum obat.
+                        </p>
+                    </div>
+
+                </section>
+
+                <!-- KOLOM PALING KANAN: Riwayat Kunjungan Sebelumnya -->
+                <section class="history-panel">
+                    <div class="history-header">
+                        <h3>Riwayat Kunjungan</h3>
+                        <button class="icon-btn-small"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                    </div>
+
+                    <div class="history-timeline-list">
+                        <!-- Card Riwayat 1 -->
+                        <div class="history-item-card">
+                            <div class="history-item-header">
+                                <span class="history-date-tag">12 Jan 2024</span>
+                                <a href="#" class="history-link-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            </div>
+                            <h4>Poli Penyakit Dalam</h4>
+                            <p class="history-complaint">Keluhan: Pusing berputar sejak 3 hari, riwayat vertigo (+) tahun 2022.</p>
+                            <p class="history-diag">Diag: <span>I10 - Essential Hypertension</span></p>
+                        </div>
+
+                        <!-- Card Riwayat 2 -->
+                        <div class="history-item-card">
+                            <div class="history-item-header">
+                                <span class="history-date-tag">05 Okt 2023</span>
+                                <a href="#" class="history-link-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            </div>
+                            <h4>IGD (Gawat Darurat)</h4>
+                            <p class="history-complaint">Keluhan: Nyeri perut hebat kuadran kanan bawah, skala nyeri 8/10.</p>
+                            <p class="history-diag">Diag: <span>K35.8 - Acute Appendicitis</span></p>
+                        </div>
+
+                        <!-- Card Riwayat 3 -->
+                        <div class="history-item-card">
+                            <div class="history-item-header">
+                                <span class="history-date-tag">15 Jun 2023</span>
+                                <a href="#" class="history-link-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            </div>
+                            <h4>Medical Check Up</h4>
+                            <p class="history-complaint">Pemeriksaan rutin tahunan. Semua parameter dalam batas normal.</p>
+                            <p class="history-diag">Diag: <span>Z00.0 - General Medical Examination</span></p>
+                        </div>
+                    </div>
+
+                    <div class="history-footer">
+                        <a href="#" class="view-all-history-link">Lihat Semua Riwayat (12)</a>
+                    </div>
+                </section>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Hubungkan ke file JavaScript eksternal -->
+    <script src="script.js"></script>
+</body>
+</html>
