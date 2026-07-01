@@ -38,7 +38,7 @@ body {
 
 /* SIDEBAR STYLES */
 .sidebar {
-    width: 240px;
+    width: 220px;
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
     display: flex;
@@ -46,44 +46,45 @@ body {
     padding: 24px 16px;
     position: fixed;
     height: 100vh;
+    z-index: 10;
 }
 
-.brand h2 {
+.sidebar-brand h2 {
     color: var(--teal-primary);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
 }
 
-.brand p {
+.sidebar-brand p {
     font-size: 11px;
     color: var(--text-muted);
 }
 
-.menu {
-    margin-top: 40px;
+.sidebar-nav {
+    margin-top: 32px;
     flex-grow: 1;
 }
 
-.menu-item {
+.nav-item {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
+    padding: 12px 14px;
     color: var(--text-muted);
     text-decoration: none;
-    border-radius: 8px;
-    margin-bottom: 6px;
+    border-radius: 6px;
+    margin-bottom: 4px;
     font-weight: 500;
-    transition: all 0.2s;
 }
 
-.menu-item i {
+.nav-item i {
     margin-right: 12px;
-    width: 18px;
+    width: 16px;
 }
 
-.menu-item:hover, .menu-item.active {
+.nav-item:hover, .nav-item.active {
     background-color: var(--teal-light);
     color: var(--teal-primary);
+    font-weight: 600;
 }
 
 .sidebar-footer {
@@ -91,18 +92,9 @@ body {
     padding-top: 16px;
 }
 
-.status-connection {
-    display: flex;
-    align-items: center;
-    font-size: 12px;
+.logout-link {
     color: var(--text-muted);
-    margin-bottom: 16px;
-}
-
-.logout-btn {
-    color: #df4759;
     text-decoration: none;
-    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -110,7 +102,7 @@ body {
 
 /* MAIN CONTENT CONTAINER */
 .main-content {
-    margin-left: 240px;
+    margin-left: 220px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;

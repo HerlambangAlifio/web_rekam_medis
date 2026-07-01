@@ -2,13 +2,14 @@
 
 :root {
     --bg-main: #f8fafc;
-    --sidebar-bg: #f1f5f9;
-    --border-color: #cbd5e1;
+    --sidebar-bg: #ffffff;
+    --border-color: #e2e8f0;
     --text-dark: #0f172a;
     --text-muted: #64748b;
-    --teal-primary: #00796b;
+    --teal: #0f766e;
+    --teal-primary: #0f766e;
     --teal-dark: #004d40;
-    --teal-light: #e0f2f1;
+    --teal-light: #f0fdfa;
     --blue-bg: #e0e7ff;
     --blue-text: #4338ca;
     --danger-red: #dc2626;
@@ -34,26 +35,22 @@ body {
     min-height: 100vh;
 }
 
-/* SIDEBAR REKAYASA KIRI */
+/* SIDEBAR STYLES */
 .sidebar {
-    width: 200px;
+    width: 220px;
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    padding: 20px 0;
+    padding: 24px 16px;
     position: fixed;
     height: 100vh;
     z-index: 10;
 }
 
-.sidebar-brand {
-    padding: 0 16px 20px 16px;
-}
-
 .sidebar-brand h2 {
-    color: #004d40;
-    font-size: 14px;
+    color: var(--teal);
+    font-size: 16px;
     font-weight: 700;
 }
 
@@ -63,88 +60,48 @@ body {
 }
 
 .sidebar-nav {
+    margin-top: 32px;
     flex-grow: 1;
 }
 
 .nav-item {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    color: #475569;
+    padding: 12px 14px;
+    color: var(--text-muted);
     text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 4px;
     font-weight: 500;
-    font-size: 12.5px;
 }
 
 .nav-item i {
     margin-right: 12px;
     width: 16px;
-    font-size: 14px;
 }
 
-.nav-item.active {
-    background-color: var(--blue-bg);
-    color: var(--blue-text);
+.nav-item.active, .nav-item:hover {
+    background-color: var(--teal-light);
+    color: var(--teal);
     font-weight: 600;
-    border-left: 3px solid var(--blue-text);
 }
 
-.nav-item:hover:not(.active) {
-    background-color: #e2e8f0;
-}
-
-.sidebar-bottom-group {
-    padding: 16px;
+.sidebar-footer {
     border-top: 1px solid var(--border-color);
+    padding-top: 16px;
 }
-
-.integration-status-box {
-    background-color: #eff6ff;
-    border: 1px solid #bfdbfe;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 16px;
-}
-
-.int-title {
-    font-size: 9px;
-    font-weight: 700;
-    color: #1e3a8a;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-}
-
-.int-status-item {
-    font-size: 11px;
-    color: #1e40af;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
-}
-
-.int-status-item:last-child { margin-bottom: 0; }
-
-.dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    display: inline-block;
-}
-.dot.green { background-color: #22c55e; }
 
 .logout-link {
-    color: #475569;
+    color: var(--text-muted);
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: 500;
 }
 
 /* CONTAINER UTAMA KONTEN */
 .main-body {
-    margin-left: 200px;
+    margin-left: 220px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
