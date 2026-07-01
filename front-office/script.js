@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
+    
+    // Logika tombol bridging bawaan
     const btnBridging = document.querySelector('.btn-outline-blue');
     if (btnBridging) {
         btnBridging.addEventListener('click', function() {
@@ -7,86 +9,80 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     const queueTableBody = document.querySelector('#queueTableBody');
-    const dummyQueue = [
-        {
-            id: 'A-001',
-            name: 'Budi Santoso',
-            rm: '10-22-45',
-            insurance: 'BPJS PBI',
-            clinic: 'Poli Jantung',
-            dpjp: 'dr. Heru Prasetyo, Sp.JP',
-            status: 'Menunggu di Klinik'
-        },
-        {
-            id: 'A-002',
-            name: 'Siti Aminah',
-            rm: '11-04-12',
-            insurance: 'UMUM',
-            clinic: 'Poli Anak',
-            dpjp: 'dr. Maya Sari, Sp.A',
-            status: 'Selesai'
-        },
-        {
-            id: 'A-003',
-            name: 'Dedi Kurniawan',
-            rm: '10-88-21',
-            insurance: 'BPJS Mandiri',
-            clinic: 'Poli Gigi',
-            dpjp: 'drg. Anita Wijaya',
-            status: 'Menunggu di Klinik'
-        },
-        {
-            id: 'A-004',
-            name: 'Ratna Sari',
-            rm: '12-15-33',
-            insurance: 'ASURANSI SWASTA',
-            clinic: 'Poli Mata',
-            dpjp: 'dr. Bambang, Sp.M',
-            status: 'Selesai'
-        }
-    ];
 
+    // Pewarnaan label berdasarkan data penjamin dari database
     const getInsuranceClass = function(insurance) {
         if (insurance.includes('BPJS')) return 'bpjs-pbi';
         if (insurance === 'UMUM') return 'umum';
         return 'swasta';
     };
 
+    // Pewarnaan status berdasarkan data dari database
     const getStatusClass = function(status) {
         return status === 'Selesai' ? 'done' : 'waiting';
     };
 
+    // =========================================================
+    // READ: AMBIL DATA DARI DATABASE (MENGGANTIKAN DATA DUMMY)
+    // =========================================================
     const renderQueue = function() {
         if (!queueTableBody) return;
 
-        queueTableBody.innerHTML = dummyQueue.map(function(item) {
-            return `
-                <tr>
-                    <td class="queue-id">${item.id}</td>
-                    <td class="patient-cell">
-                        <strong>${item.name}</strong>
-                        <span>RM: ${item.rm}</span>
-                    </td>
-                    <td><span class="tag-insurance ${getInsuranceClass(item.insurance)}">${item.insurance}</span></td>
-                    <td class="doctor-cell">
-                        <strong>${item.clinic}</strong>
-                        <span>${item.dpjp}</span>
-                    </td>
-                    <td><span class="status-pill ${getStatusClass(item.status)}">${item.status}</span></td>
-                    <td style="text-align: center;"><button class="btn-edit-action" type="button"><i class="fa-regular fa-pen-to-square"></i></button></td>
-                </tr>
-            `;
-        }).join('');
+        // Ambil data langsung dari endpoint API PHP
+        fetch('api.php')
+            .then(response => response.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    // Jika data kosong di database
+                    if (res.data.length === 0) {
+                        queueTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Belum ada antrean untuk hari ini.</td></tr>`;
+                        return;
+                    }
 
-        queueTableBody.querySelectorAll('.btn-edit-action').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                alert('Fitur edit data dummy sedang siap dikembangkan.');
-            });
-        });
+                    // Tampilkan data dinamis dari database ke dalam tabel
+                    queueTableBody.innerHTML = res.data.map(function(item) {
+                        return `
+                            <tr>
+                                <td class="queue-id">${item.no_antrean}</td>
+                                <td class="patient-cell">
+                                    <strong>${item.nama_pasien}</strong>
+                                    <span>RM: ${item.no_rm}</span>
+                                </td>
+                                <td><span class="tag-insurance ${getInsuranceClass(item.penjamin)}">${item.penjamin}</span></td>
+                                <td class="doctor-cell">
+                                    <strong>${item.klinik}</strong>
+                                    <span>${item.dpjp}</span>
+                                </td>
+                                <td><span class="status-pill ${getStatusClass(item.status_antrean)}">${item.status_antrean}</span></td>
+                                <td style="text-align: center;">
+                                    <button class="btn-edit-action" type="button" data-id="${item.no_antrean}">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    // Re-attach event listener untuk tombol edit dinamis jika diperlukan
+                    queueTableBody.querySelectorAll('.btn-edit-action').forEach(function(btn) {
+                        btn.addEventListener('click', function() {
+                            const id = this.getAttribute('data-id');
+                            alert('Fitur ubah status atau edit untuk antrean ' + id + ' siap dikembangkan.');
+                        });
+                    });
+                } else {
+                    console.error("Gagal memuat data dari server:", res.message);
+                }
+            })
+            .catch(err => console.error("Kesalahan jaringan:", err));
     };
 
+    // Jalankan pemanggilan data pertama kali saat halaman dimuat
     renderQueue();
 
+    // =========================================================
+    // CREATE: LOGIKA MODAL INPUT & SIMPAN KE DATABASE
+    // =========================================================
     const btnNewPatient = document.querySelector('.action-header-buttons .btn-teal');
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'modal-overlay';
@@ -115,10 +111,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         <span>Penjamin</span>
                         <select name="insurance" required>
                             <option value="">Pilih penjamin</option>
-                            <option>BPJS PBI</option>
-                            <option>BPJS Mandiri</option>
-                            <option>UMUM</option>
-                            <option>ASURANSI SWASTA</option>
+                            <option value="BPJS PBI">BPJS PBI</option>
+                            <option value="BPJS Mandiri">BPJS Mandiri</option>
+                            <option value="UMUM">UMUM</option>
+                            <option value="ASURANSI SWASTA">ASURANSI SWASTA</option>
                         </select>
                     </label>
                     <label>
@@ -140,53 +136,58 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.body.appendChild(modalOverlay);
 
-    const closeModal = function() {
-        modalOverlay.classList.remove('active');
-    };
-
-    const openModal = function() {
-        modalOverlay.classList.add('active');
-    };
+    const closeModal = function() { modalOverlay.classList.remove('active'); };
+    const openModal = function() { modalOverlay.classList.add('active'); };
 
     if (btnNewPatient) {
         btnNewPatient.addEventListener('click', openModal);
     }
 
     modalOverlay.addEventListener('click', function(event) {
-        if (event.target === modalOverlay || event.target.closest('.modal-cancel')) {
+        if (event.target === modalOverlay || event.target.closest('.modal-cancel') || event.target.closest('.modal-close')) {
             closeModal();
         }
     });
-
-    const closeBtn = modalOverlay.querySelector('.modal-close');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeModal);
-    }
 
     const form = modalOverlay.querySelector('.modal-form');
     if (form) {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const formData = new FormData(form);
-            const newPatient = {
-                id: formData.get('queueNumber') || 'A-999',
-                name: formData.get('patientName') || 'Pasien Baru',
-                rm: '99-99-99',
-                insurance: formData.get('insurance') || 'UMUM',
-                clinic: formData.get('clinic') || 'Poli Umum',
-                dpjp: formData.get('dpjp') || 'dr. Umum',
-                status: 'Menunggu di Klinik'
+            // Ambil data kiriman dari elemen input form
+            const dataObj = {
+                queueNumber: form.queueNumber.value,
+                patientName: form.patientName.value,
+                insurance: form.insurance.value,
+                clinic: form.clinic.value,
+                dpjp: form.dpjp.value
             };
 
-            dummyQueue.unshift(newPatient);
-            renderQueue();
-            form.reset();
-            closeModal();
-            alert('Pasien baru berhasil ditambahkan ke antrean dummy.');
+            // Kirim data terstruktur dalam bentuk JSON string ke api.php via POST
+            fetch('api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataObj)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    alert(result.message);
+                    form.reset();
+                    closeModal();
+                    renderQueue(); // Segera segarkan tabel agar data terbaru dari database langsung naik
+                } else {
+                    alert("Gagal mendaftarkan pasien: " + result.message);
+                }
+            })
+            .catch(err => {
+                console.error("Gagal melakukan registrasi:", err);
+                alert("Terjadi gangguan koneksi ke server backend.");
+            });
         });
     }
 
+    // Logika tombol penerbitan SEP bawaan
     const btnSep = document.querySelector('.btn-block-blue');
     if (btnSep) {
         btnSep.addEventListener('click', function() {

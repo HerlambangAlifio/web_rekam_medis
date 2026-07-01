@@ -20,7 +20,7 @@
                 <p>Clinical System</p>
             </div>
             <nav class="sidebar-nav">
-                <a href="../front-office/index.html" class="nav-item active"><i class="fa-solid fa-desktop"></i> Front Office</a>
+                <a href="../front-office/index.php" class="nav-item active"><i class="fa-solid fa-desktop"></i> Front Office</a>
                 <a href="../Nurse_Station/index.html" class="nav-item"><i class="fa-solid fa-user-nurse"></i> Nurse Station</a>
                 <a href="../doctor-emr/index.html" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Doctor EMR</a>
                 <a href="../billing/index.html" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> Billing</a>
@@ -130,6 +130,7 @@
                         </div>
 
                         <!-- Table -->
+                       <!-- Cari bagian table di index.html Anda dan pastikan bentuknya seperti ini -->
                         <table class="queue-table">
                             <thead>
                                 <tr>
@@ -141,8 +142,8 @@
                                     <th style="text-align: center; width: 60px;">AKSI</th>
                                 </tr>
                             </thead>
-                            <tbody id="queueTableBody">
-                            </tbody>
+                            <!-- Biarkan kosong, akan diisi otomatis oleh script.js -->
+                            <tbody id="queueTableBody"></tbody>
                         </table>
 
                         <!-- Pagination -->
