@@ -24,38 +24,38 @@ if ($method === 'POST') {
 }
 
 // 2. PUT: UPDATE STATUS ANTREAN (Baru untuk Admin)
-if ($method === 'PUT') {
-    $input = json_decode(file_get_contents('php://input'), true);
+// if ($method === 'PUT') {
+//     $input = json_decode(file_get_contents('php://input'), true);
     
-    if (!empty($input['id']) && !empty($input['status'])) {
-        try {
-            $stmt = $pdo->prepare("UPDATE antrean SET status_antrean = ? WHERE id = ?");
-            $stmt->execute([$input['status'], $input['id']]);
+//     if (!empty($input['id']) && !empty($input['status'])) {
+//         try {
+//             $stmt = $pdo->prepare("UPDATE antrean SET status_antrean = ? WHERE id = ?");
+//             $stmt->execute([$input['status'], $input['id']]);
             
-            echo json_encode(["status" => "success", "message" => "Status antrean berhasil diperbarui!"]);
-        } catch (Exception $e) {
-            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-        }
-    } else {
-        echo json_encode(["status" => "error", "message" => "Data tidak lengkap."]);
-    }
-}
+//             echo json_encode(["status" => "success", "message" => "Status antrean berhasil diperbarui!"]);
+//         } catch (Exception $e) {
+//             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+//         }
+//     } else {
+//         echo json_encode(["status" => "error", "message" => "Data tidak lengkap."]);
+//     }
+// }
 
-// 3. DELETE: HAPUS ANTREAN (Baru untuk Admin)
-if ($method === 'DELETE') {
-    $input = json_decode(file_get_contents('php://input'), true);
+// // 3. DELETE: HAPUS ANTREAN (Baru untuk Admin)
+// if ($method === 'DELETE') {
+//     $input = json_decode(file_get_contents('php://input'), true);
     
-    if (!empty($input['id'])) {
-        try {
-            $stmt = $pdo->prepare("DELETE FROM antrean WHERE id = ?");
-            $stmt->execute([$input['id']]);
+//     if (!empty($input['id'])) {
+//         try {
+//             $stmt = $pdo->prepare("DELETE FROM antrean WHERE id = ?");
+//             $stmt->execute([$input['id']]);
             
-            echo json_encode(["status" => "success", "message" => "Antrean berhasil dihapus."]);
-        } catch (Exception $e) {
-            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-        }
-    } else {
-        echo json_encode(["status" => "error", "message" => "ID tidak ditemukan."]);
-    }
-}
+//             echo json_encode(["status" => "success", "message" => "Antrean berhasil dihapus."]);
+//         } catch (Exception $e) {
+//             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+//         }
+//     } else {
+//         echo json_encode(["status" => "error", "message" => "ID tidak ditemukan."]);
+//     }
+// }
 ?>

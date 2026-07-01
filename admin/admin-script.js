@@ -7,9 +7,12 @@ document.addEventListener("DOMContentLoaded", function() {
         // Tampilkan indikator loading ringan
         adminQueueTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Memuat data dari server...</td></tr>`;
 
-        // Panggil endpoint GET pada api.php di folder front-office
-        fetch('../front-office/api.php')
-            .then(response => response.json())
+        // Panggil endpoint GET pada admin-api.php
+        fetch('./admin-api.php')
+            .then(response => {
+                if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
+                return response.json();
+            })
             .then(res => {
                 if (res.status === 'success') {
                     if (res.data.length === 0) {
@@ -50,17 +53,19 @@ document.addEventListener("DOMContentLoaded", function() {
                             </tr>
                         `;
                     }).join('');
+                } else {
+                    adminQueueTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">${res.message || 'Gagal memuat data dari server.'}</td></tr>`;
                 }
             })
             .catch(err => {
                 console.error("Gagal mengambil data:", err);
-                adminQueueTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Gagal memuat data. Periksa koneksi ke api.php.</td></tr>`;
+                adminQueueTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Gagal memuat data dari server: ${err.message}</td></tr>`;
             });
     };
 
     // Fungsi Mengubah Status Antrean Pasien (PUT)
     window.updateStatus = function(id, statusBaru) {
-        fetch('../front-office/api.php', {
+        fetch('admin-api.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id, status: statusBaru })
@@ -79,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Fungsi Menghapus Rekor Antrean (DELETE)
     window.deleteAntrean = function(id) {
         if (confirm("Apakah Anda sangat yakin ingin menghapus antrean ini secara permanen dari database?")) {
-            fetch('../front-office/api.php', {
+            fetch('admin-api.php', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: id })
