@@ -7,7 +7,6 @@ $method = $_SERVER['REQUEST_METHOD'];
 // 1. GET & POST (Tetap gunakan logic yang sudah Anda miliki sebelumnya)
 if ($method === 'GET') {
     try {
-        // Kita hapus kondisi CURDATE() khusus untuk admin agar bisa memantau semua riwayat jika perlu
         $stmt = $pdo->query("SELECT a.id, a.no_antrean, p.nama_pasien, p.no_rm, a.penjamin, a.klinik, a.dpjp, a.status_antrean, a.tanggal_antrean 
                              FROM antrean a 
                              JOIN pasien p ON a.no_rm = p.no_rm
@@ -17,10 +16,43 @@ if ($method === 'GET') {
     } catch (Exception $e) {
         echo json_encode(["status" => "error", "message" => $e->getMessage()]);
     }
+    exit;
 }
 
 if ($method === 'POST') {
-    // ... code POST pendaftaran pasien Anda yang sudah ada ...
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    if (empty($input['queueNumber']) || empty($input['patientName']) || empty($input['no_rm']) || empty($input['insurance']) || empty($input['clinic']) || empty($input['dpjp'])) {
+        echo json_encode(["status" => "error", "message" => "Data registrasi tidak lengkap. Pastikan semua field terisi."], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $queueNumber = trim($input['queueNumber']);
+    $patientName = trim($input['patientName']);
+    $noRm = trim($input['no_rm']);
+    $insurance = trim($input['insurance']);
+    $clinic = trim($input['clinic']);
+    $dpjp = trim($input['dpjp']);
+    $today = date('Y-m-d');
+
+    try {
+        // Pastikan pasien sudah ada di tabel pasien, jika belum buat baru
+        $stmt = $pdo->prepare("SELECT no_rm FROM pasien WHERE no_rm = ?");
+        $stmt->execute([$noRm]);
+
+        if ($stmt->rowCount() === 0) {
+            $insertPatient = $pdo->prepare("INSERT INTO pasien (no_rm, nama_pasien) VALUES (?, ?)");
+            $insertPatient->execute([$noRm, $patientName]);
+        }
+
+        $insertQueue = $pdo->prepare("INSERT INTO antrean (no_antrean, no_rm, penjamin, klinik, dpjp, status_antrean, tanggal_antrean) VALUES (?, ?, ?, ?, ?, 'Menunggu di Klinik', ?)");
+        $insertQueue->execute([$queueNumber, $noRm, $insurance, $clinic, $dpjp, $today]);
+
+        echo json_encode(["status" => "success", "message" => "Pasien berhasil didaftarkan dan antrean tersimpan."], JSON_UNESCAPED_UNICODE);
+    } catch (Exception $e) {
+        echo json_encode(["status" => "error", "message" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    }
+    exit;
 }
 
 // 2. PUT: UPDATE STATUS ANTREAN (Baru untuk Admin)

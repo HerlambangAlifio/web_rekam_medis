@@ -108,6 +108,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         <input name="patientName" type="text" placeholder="Masukkan nama pasien" required>
                     </label>
                     <label>
+                        <span>No. RM</span>
+                        <input name="patientRm" type="text" placeholder="Contoh: 12-34-56" required>
+                    </label>
+                    <label>
                         <span>Penjamin</span>
                         <select name="insurance" required>
                             <option value="">Pilih penjamin</option>
@@ -158,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const dataObj = {
                 queueNumber: form.queueNumber.value,
                 patientName: form.patientName.value,
+                no_rm: form.patientRm.value,
                 insurance: form.insurance.value,
                 clinic: form.clinic.value,
                 dpjp: form.dpjp.value

@@ -4,16 +4,11 @@ require_once '../Config/db.php';
 
 // 2. Ambil statistik realtime lewat query langsung untuk efisiensi load awal
 try {
-    // Hitung total antrean hari ini
-    $stmtTotal = $pdo->query("SELECT COUNT(*) FROM antrean WHERE tanggal_antrean = CURDATE()");
+    // Hitung total antrean (seluruh riwayat)
+    $stmtTotal = $pdo->query("SELECT COUNT(*) FROM antrean");
     $totalPasienHariIni = $stmtTotal->fetchColumn();
-
-    // Hitung antrean yang masih menunggu
-    $stmtMenunggu = $pdo->query("SELECT COUNT(*) FROM antrean WHERE tanggal_antrean = CURDATE() AND status_antrean = 'Menunggu di Klinik'");
-    $totalMenunggu = $stmtMenunggu->fetchColumn();
 } catch (Exception $e) {
     $totalPasienHariIni = 0;
-    $totalMenunggu = 0;
 }
 ?>
 <!DOCTYPE html>
@@ -86,13 +81,10 @@ try {
                 <!-- LIVE METRICS CARD (Dihitung langsung via PHP) -->
                 <div class="stats-row" style="display: flex; gap: 16px; margin-bottom: 20px;">
                     <div class="stat-box border-purple" style="flex: 1; background: white; padding: 14px; border-radius: 6px; border-left: 4px solid #a855f7;">
-                        <div class="stat-label" style="font-size: 10px; color: var(--text-muted); font-weight: 600;">TOTAL ANTREAN HARI INI</div>
+                        <div class="stat-label" style="font-size: 10px; color: var(--text-muted); font-weight: 600;">TOTAL ANTREAN</div>
                         <div class="stat-value" style="font-size: 24px; font-weight: 700; margin-top: 4px;"><?= $totalPasienHariIni; ?></div>
                     </div>
-                    <div class="stat-box border-blue" style="flex: 1; background: white; padding: 14px; border-radius: 6px; border-left: 4px solid #3b82f6;">
-                        <div class="stat-label" style="font-size: 10px; color: var(--text-muted); font-weight: 600;">BELUM DILAYANI</div>
-                        <div class="stat-value" style="font-size: 24px; font-weight: 700; margin-top: 4px; color: #3b82f6;"><?= $totalMenunggu; ?></div>
-                    </div>
+                    <!-- Removed 'Belum Dilayani' card per admin request -->
                 </div>
 
                 <!-- TABLE DATA CONTROL -->

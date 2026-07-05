@@ -10,7 +10,6 @@ if ($method === 'GET') {
         $sql = "SELECT a.id, a.no_antrean, p.nama_pasien, p.no_rm, a.penjamin, a.klinik, a.dpjp, a.status_antrean, a.tanggal_antrean "
              . "FROM antrean a "
              . "JOIN pasien p ON a.no_rm = p.no_rm "
-             . "WHERE a.tanggal_antrean = CURDATE() "
              . "ORDER BY a.id DESC";
 
         $stmt = $pdo->query($sql);
