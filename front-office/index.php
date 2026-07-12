@@ -21,9 +21,9 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="../front-office/index.php" class="nav-item active"><i class="fa-solid fa-desktop"></i> Front Office</a>
-                <a href="../Nurse_Station/index.html" class="nav-item"><i class="fa-solid fa-user-nurse"></i> Nurse Station</a>
-                <a href="../doctor-emr/index.html" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Doctor EMR</a>
-                <a href="../billing/index.html" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> Billing</a>
+                <a href="../Nurse_Station/index.php" class="nav-item"><i class="fa-solid fa-user-nurse"></i> Nurse Station</a>
+                <a href="../doctor-emr/index.php" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Doctor EMR</a>
+                <a href="../billing/index.php" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> Billing</a>
             </nav>
             <div class="sidebar-footer">
                 <a href="../login/index.html" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>

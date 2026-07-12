@@ -121,14 +121,25 @@ document.addEventListener("DOMContentLoaded", function() {
                             <option value="ASURANSI SWASTA">ASURANSI SWASTA</option>
                         </select>
                     </label>
-                    <label>
-                        <span>Klinik</span>
-                        <input name="clinic" type="text" placeholder="Contoh: Poli Anak" required>
-                    </label>
-                    <label>
-                        <span>DPJP</span>
-                        <input name="dpjp" type="text" placeholder="Contoh: dr. Maya Sari" required>
-                    </label>
+                 <label>
+    <span>Klinik</span>
+    <select name="clinic" required>
+        <option value="">Pilih Poliklinik</option>
+        <option value="1">Poli Umum</option>
+        <option value="2">Poli Gigi</option>
+        <option value="3">Poli Anak</option>
+        <option value="4">Poli Kandungan</option>
+    </select>
+</label>
+
+<label>
+    <span>DPJP</span>
+    <select name="dpjp" required>
+        <option value="">Pilih Dokter</option>
+        <option value="1">dr. Andi</option>
+        <option value="2">dr. Budi</option>
+    </select>
+</label>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline-blue modal-cancel">Batal</button>

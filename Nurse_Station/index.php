@@ -18,9 +18,9 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="../front-office/index.php" class="nav-item"><i class="fa-solid fa-desktop"></i> Front Office</a>
-                <a href="../Nurse_Station/index.html" class="nav-item active"><i class="fa-solid fa-user-nurse"></i> Nurse Station</a>
-                <a href="../doctor-emr/index.html" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Doctor EMR</a>
-                <a href="../billing/index.html" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> Billing</a>
+                <a href="../Nurse_Station/index.php" class="nav-item active"><i class="fa-solid fa-user-nurse"></i> Nurse Station</a>
+                <a href="../doctor-emr/index.php" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Doctor EMR</a>
+                <a href="../billing/index.php" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> Billing</a>
             </nav>
             <div class="sidebar-footer">
                 <a href="../login/index.html" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
@@ -48,34 +48,8 @@
                     <button class="icon-notification"><i class="fa-regular fa-bell"></i></button>
                     <button class="icon-settings"><i class="fa-solid fa-gear"></i></button>
                     <button class="icon-help"><i class="fa-regular fa-circle-question"></i></button>
-                    <div class="profile-avatar">
-                        <img src="https://via.placeholder.com/35" alt="Perawat">
-                    </div>
                 </div>
             </header>
-
-            <section class="patient-info-bar">
-                <div class="info-block">
-                    <label>NAMA PASIEN</label>
-                    <strong>Budi Santoso</strong>
-                </div>
-                <div class="info-block">
-                    <label>NO. REKAM MEDIS</label>
-                    <strong class="text-teal">00–12–34</strong>
-                </div>
-                <div class="info-block">
-                    <label>UMUR / JK</label>
-                    <strong>45th / Laki-laki</strong>
-                </div>
-                <div class="info-block">
-                    <label>PENJAMIN</label>
-                    <span class="badge-bpjs">BPJS Kesehatan</span>
-                </div>
-                <div class="allergy-alert">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Alergi: Seafood, Penisilin</span>
-                </div>
-            </section>
 
             <div class="dashboard-grid">
                 
@@ -84,36 +58,7 @@
                         <h3>Antrean Aktif</h3>
                         <p>Poli Penyakit Dalam - Dr. Gunawan</p>
                     </div>
-                    <div class="queue-list">
-                        
-                        <div class="queue-card active">
-                            <div class="card-top">
-                                <span class="queue-number">A–024</span>
-                                <span class="status-badge processing">Dalam Proses</span>
-                            </div>
-                            <h4 class="patient-name">Budi Santoso</h4>
-                            <button class="btn-recall"><i class="fa-solid fa-bullhorn"></i> Panggil Ulang</button>
-                        </div>
-
-                        <div class="queue-card">
-                            <div class="card-top">
-                                <span class="queue-number">A–025</span>
-                                <span class="status-badge waiting">Menunggu</span>
-                            </div>
-                            <h4 class="patient-name">Siti Aminah</h4>
-                            <button class="btn-call"><i class="fa-solid fa-bell"></i> Panggil</button>
-                        </div>
-
-                        <div class="queue-card">
-                            <div class="card-top">
-                                <span class="queue-number">A–026</span>
-                                <span class="status-badge waiting">Menunggu</span>
-                            </div>
-                            <h4 class="patient-name">Rudi Hermawan</h4>
-                            <button class="btn-call"><i class="fa-solid fa-bell"></i> Panggil</button>
-                        </div>
-
-                    </div>
+                    <div class="queue-list" id="queueList"></div>
                 </aside>
 
                 <section class="form-container">
@@ -145,27 +90,35 @@
                             <div class="inputs-grid-6">
                                 <div class="input-group">
                                     <label>Tekanan Darah (mmHg)</label>
-                                    <input type="text" placeholder="Contoh: 120/80">
+                                    <input
+type="text"
+id="td"
+placeholder="120/80"
+>
                                 </div>
                                 <div class="input-group">
                                     <label>Nadi (bpm)</label>
-                                    <input type="text" value="80">
+                                    <input type="text" id="nadi" placeholder="80">
                                 </div>
                                 <div class="input-group">
                                     <label>Suhu (°C)</label>
-                                    <input type="text" value="36.5">
+                                    <input type="text" id="suhu" placeholder="36.5">
                                 </div>
                                 <div class="input-group">
                                     <label>Berat Badan (kg)</label>
-                                    <input type="text" value="70">
+                                    <input
+type="text"
+id="bb"
+placeholder="70"
+>
                                 </div>
                                 <div class="input-group">
                                     <label>Tinggi Badan (cm)</label>
-                                    <input type="text" value="170">
+                                    <input type="text" id="tb" placeholder="170">
                                 </div>
                                 <div class="input-group">
                                     <label>Laju Pernapasan (/mnt)</label>
-                                    <input type="text" value="18">
+                                    <input type="text" id="rr" placeholder="18">
                                 </div>
                             </div>
                         </div>
@@ -174,16 +127,27 @@
                             <h3 class="section-heading">Riwayat & Keluhan</h3>
                             <div class="input-group full-width">
                                 <label>Keluhan Utama</label>
-                                <textarea placeholder="Deskripsikan alasan pasien berobat..."></textarea>
+                              <textarea
+id="keluhan"
+placeholder="Deskripsikan alasan pasien berobat...">
+</textarea>
                             </div>
                             <div class="inputs-grid-2 mt-3">
                                 <div class="input-group">
                                     <label>Riwayat Alergi</label>
-                                    <textarea placeholder="Sebutkan obat/makanan..." class="textarea-small">Sebutkan obat/makanan...</textarea>
+                                    <textarea
+id="alergi"
+placeholder="Sebutkan obat/makanan..."
+class="textarea-small">
+</textarea>
                                 </div>
                                 <div class="input-group">
                                     <label>Skrining Risiko Jatuh</label>
-                                    <textarea placeholder="Catat hasil skrining risiko jatuh..." class="textarea-small">Catat hasil skrining risiko jatuh...</textarea>
+                                   <textarea
+id="risiko"
+placeholder="Catat hasil skrining risiko jatuh..."
+class="textarea-small">
+</textarea>
                                 </div>
                             </div>
                         </div>

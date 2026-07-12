@@ -1,97 +1,172 @@
+let selectedPatientId = null;
+
 document.addEventListener("DOMContentLoaded", function () {
-    
-    // 1. Logika Pengalihan Tab Dokumentasi SOAP
-    const tabs = document.querySelectorAll(".soap-tab");
-    const textarea = document.querySelector(".soap-textarea");
+    loadQueue();
+    setInterval(loadQueue, 3000);
+});
 
-    // Catatan placeholder atau tiruan isi database berdasarkan tab
-    const tabContents = {
-        subjektif: "Pasien mengeluh pusing sejak tadi pagi. Leher terasa kaku dan pegal. Tidur kurang nyenyak semalam. Riwayat hipertensi sejak 2 tahun lalu namun kontrol tidak teratur.",
-        objektif: "Kesadaran: Compos Mentis. Tekanan Darah: 120/80 mmHg. Nadi: 82 x/menit. Suhu: 36.7 °C. Kepala/Leher: JVP tidak meningkat, pembesaran KGB (-). Jantung: Irama reguler, bising jantung (-).",
-        asesmen: "Diagnosis Kerja: Essential (primary) hypertension (ICD-10: I10).",
-        plan: "Rencana Pengobatan: Pemberian Amlodipine 5mg sekali sehari. Edukasi pembatasan konsumsi garam dan olahraga ringan teratur. Kontrol kembali ke poli dalam 2 minggu."
-    };
+function loadQueue() {
+    fetch("api_queue.php")
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById("queueList");
+            list.innerHTML = "";
 
-    tabs.forEach(tab => {
-        tab.addEventListener("click", function () {
-            // Hapus kelas aktif dari tab sebelumnya
-            tabs.forEach(t => t.classList.remove("active"));
-            // Tambahkan kelas aktif pada tab terpilih
-            this.classList.add("active");
-
-            // Ubah isi konten teks sesuai tab yang dipilih
-            const tabKey = this.getAttribute("data-tab");
-            if (tabContents[tabKey]) {
-                textarea.value = tabContents[tabKey];
-            }
-        });
-    });
-
-    // 2. Logika Interaksi Tambah Baris Resep Obat (E-Resep)
-    const addMedRowBtn = document.getElementById("addMedRowBtn");
-    const prescriptionTableBody = document.querySelector("#prescriptionTable tbody");
-
-    if (addMedRowBtn && prescriptionTableBody) {
-        addMedRowBtn.addEventListener("click", function () {
-            // Ambil baris tiruan isian baru (baris kedua)
-            const inputRow = document.querySelector(".row-input-new");
-            const inputs = inputRow.querySelectorAll("input");
-            
-            const namaObat = inputs[0].value.trim();
-            const signa = inputs[1].value.trim();
-            const jumlah = inputs[2].value.trim();
-
-            // Validasi sederhana: pastikan nama obat diisi sebelum ditambahkan
-            if (namaObat === "") {
-                alert("Silakan isi nama obat terlebih dahulu pada baris pencarian.");
-                inputs[0].focus();
+            if (data.length === 0) {
+                list.innerHTML = "<p>Tidak ada pasien.</p>";
                 return;
             }
 
-            // Buat elemen baris tabel baru (tr) untuk dimasukkan ke daftar atas
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                <td><input type="text" class="table-input" value="${namaObat}"></td>
-                <td><input type="text" class="table-input" value="${signa}"></td>
-                <td><input type="number" class="table-input" value="${jumlah}"></td>
-                <td style="text-align: center;"><button class="btn-delete-row"><i class="fa-solid fa-xmark"></i></button></td>
-            `;
+            data.forEach((p, index) => {
+                const pasien = encodeURIComponent(JSON.stringify(p));
 
-            // Pasang event listener hapus baris pada tombol hapus yang baru dibuat
-            newRow.querySelector(".btn-delete-row").addEventListener("click", function () {
-                newRow.remove();
+                list.innerHTML += `
+                    <div class="queue-card ${index === 0 ? 'active' : ''}"
+                         onclick="pilihPasien('${pasien}', this)">
+                        <div class="card-top">
+                            <span class="queue-number">${p.no_antrean}</span>
+                        </div>
+                        <h4>${p.nama_pasien}</h4>
+                        <small>${p.nama_poli}</small>
+                    </div>
+                `;
             });
 
-            // Masukkan baris baru tepat sebelum baris input pencarian obat
-            prescriptionTableBody.insertBefore(newRow, inputRow);
-
-            // Bersihkan kolom pencarian agar bisa digunakan kembali
-            inputs[0].value = "";
-            inputs[1].value = "";
-            inputs[2].value = "";
-            inputs[0].focus();
+            tampilBanner(data[0]);
+        })
+        .catch(err => {
+            console.error(err);
         });
-    }
+}
 
-    // Pasang handler penghapusan untuk baris obat bawaan pertama (Amlodipine)
-    const defaultDeleteBtn = document.querySelector(".btn-delete-row");
-    if (defaultDeleteBtn) {
-        defaultDeleteBtn.addEventListener("click", function () {
-            this.closest("tr").remove();
-        });
-    }
+function pilihPasien(data, card) {
+    data = JSON.parse(decodeURIComponent(data));
 
-    // 3. Tombol Aksi Finalisasi & Simpan EMR
-    const btnSaveEmr = document.querySelector(".btn-save-emr");
-    const confirmCheckbox = document.getElementById("confirmCheckbox");
+    document.querySelectorAll(".queue-card").forEach(item => {
+        item.classList.remove("active");
+    });
 
-    if (btnSaveEmr) {
-        btnSaveEmr.addEventListener("click", function () {
-            if (confirmCheckbox && !confirmCheckbox.checked) {
-                alert("Harap centang kotak konfirmasi validasi data terlebih dahulu sebelum melakukan finalisasi.");
-                return;
-            }
-            alert("Sukses! Rekam Medis Elektronik (EMR) pasien berhasil dikunci, ditandatangani secara digital, dan disinkronisasikan.");
-        });
+    card.classList.add("active");
+    tampilBanner(data);
+}
+
+function tampilBanner(data) {
+    selectedPatientId = data.id_daftar;
+
+    document.getElementById("avatarPasien").innerHTML =
+        data.nama_pasien.substring(0, 2).toUpperCase();
+
+    document.getElementById("namaPasien").innerHTML = data.nama_pasien;
+    document.getElementById("noRM").innerHTML = "No. RM : " + data.no_rm;
+    document.getElementById("keluhan").innerHTML = data.keluhan_utama || "-";
+    document.getElementById("tekananDarah").innerHTML = data.tekanan_darah || "-";
+    document.getElementById("nadi").innerHTML = data.nadi || "-";
+    document.getElementById("suhu").innerHTML = data.suhu_tubuh || "-";
+    document.getElementById("beratBadan").innerHTML = data.berat_badan || "-";
+    document.getElementById("tinggiBadan").innerHTML = data.tinggi_badan || "-";
+}
+
+// ===========================
+// TAMBAH BARIS RESEP
+// ===========================
+
+const tbodyResep = document.getElementById("tbodyResep");
+
+function tambahBarisResep(nama = "", signa = "", jumlah = "") {
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+        <td>
+            <input type="text" class="table-input nama-obat" value="${nama}">
+        </td>
+        <td>
+            <input type="text" class="table-input signa" value="${signa}">
+        </td>
+        <td>
+            <input type="number" class="table-input jumlah" value="${jumlah}">
+        </td>
+        <td style="text-align:center">
+            <button class="btn-delete-row">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </td>
+    `;
+
+    tbodyResep.appendChild(row);
+}
+
+// Satu baris kosong saat halaman dibuka
+tambahBarisResep();
+
+document.getElementById("addMedRowBtn").addEventListener("click", () => {
+    tambahBarisResep();
+});
+
+// Event listener global untuk hapus baris resep
+document.addEventListener("click", function (e) {
+    if (e.target.closest(".btn-delete-row")) {
+        e.target.closest("tr").remove();
     }
 });
+
+// Event listener untuk menyimpan resep
+document.getElementById("btnSaveResep").addEventListener("click", function () {
+    const resep = [];
+
+    document.querySelectorAll("#tbodyResep tr").forEach(row => {
+        const namaObatInput = row.querySelector(".nama-obat");
+        const signaInput = row.querySelector(".signa");
+        const jumlahInput = row.querySelector(".jumlah");
+
+        // Memastikan element input ditemukan sebelum mengambil nilainya
+        if (namaObatInput && signaInput && jumlahInput) {
+            resep.push({
+                nama_obat: namaObatInput.value,
+                signa: signaInput.value,
+                jumlah: jumlahInput.value
+            });
+        }
+    });
+
+    console.log(selectedPatientId);
+
+    fetch("save_resep.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id_daftar: selectedPatientId,
+            resep: resep
+        })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.status == "success") {
+            alert(res.message);
+            selectedPatientId = null;
+
+            document.getElementById("avatarPasien").innerHTML = "-";
+            document.getElementById("namaPasien").innerHTML = "Belum ada pasien";
+            document.getElementById("noRM").innerHTML = "No. RM : -";
+            document.getElementById("keluhan").innerHTML = "-";
+            document.getElementById("tekananDarah").innerHTML = "-";
+            document.getElementById("nadi").innerHTML = "-";
+            document.getElementById("suhu").innerHTML = "-";
+            document.getElementById("beratBadan").innerHTML = "-";
+            document.getElementById("tinggiBadan").innerHTML = "-";
+
+            if (tbodyResep) {
+                tbodyResep.innerHTML = "";
+                tambahBarisResep(); // Reset baris resep jadi kosong kembali
+            }
+
+            loadQueue();
+        } else {
+            alert(res.message);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+    });
+}); // <--- Tanda penutup ini yang sebelumnya hilang di kode Anda
