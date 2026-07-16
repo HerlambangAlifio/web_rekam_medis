@@ -25,23 +25,59 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ===========================
-    // TOMBOL SELESAI
-    // ===========================
+// TOMBOL SELESAI / PULANG
+// ===========================
+document.querySelector(".btn-primary").addEventListener("click", function () {
+    if (selectedPatient == null) {
+        alert("Pilih pasien terlebih dahulu.");
+        return;
+    }
 
-    document.querySelector(".btn-primary")
-    .addEventListener("click", function () {
+    // Konfirmasi tindakan kasir
+    if (confirm("Apakah pasien ini sudah menyelesaikan pembayaran dan diizinkan pulang?")) {
+        
+        // Kirim request ke update_status.php menggunakan POST
+        fetch("update_status.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id_daftar: selectedPatient
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert(data.message);
+                
+                // Reset pasien terpilih ke null agar sistem dapat memuat antrean pertama yang tersisa
+                selectedPatient = null;
 
-        if(selectedPatient==null){
+                // Reset juga kontainer resep di sebelah kanan ke tampilan default
+                document.getElementById("resepContainer").innerHTML = `
+                    <div class="prescription-box mt-3">
+                        <center>
+                            <br>
+                            <h4>Silakan pilih pasien</h4>
+                            <p>Daftar resep akan muncul di sini.</p>
+                            <br>
+                        </center>
+                    </div>
+                `;
 
-            alert("Pilih pasien terlebih dahulu.");
-
-            return;
-
-        }
-
-        alert("Tahap berikutnya kita buat update status menjadi SELESAI.");
-
-    });
+                // Muat ulang antrean secara instan tanpa menunggu interval 3 detik
+                loadQueue();
+            } else {
+                alert("Gagal memperbarui status: " + data.message);
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            alert("Terjadi kesalahan koneksi sistem.");
+        });
+    }
+});
 
     // ===========================
     // CETAK

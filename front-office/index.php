@@ -75,92 +75,86 @@
                 </div>
 
                 <!-- MAIN DASHBOARD GRID -->
-                <div class="main-dashboard-grid">
-                    
-                    <!-- LEFT CONTROLS -->
-                    <div class="left-controls">
-                        
-                        <!-- Search Medical Records Card -->
-                        <div class="card">
-                            <div class="card-title">Quick Search Medical Records (No. RM)</div>
-                            <div class="search-row">
-                                <input type="text" placeholder="Masukkan No. RM...">
-                                <button class="btn-search-action">Cari</button>
-                            </div>
-                        </div>
+<div class="main-dashboard-grid">
+    
+    <!-- LEFT CONTROLS (Kolom Kiri - Lebar 320px) -->
+    <div class="left-controls">
+        
+        <!-- Search Card -->
+        <div class="card">
+            <div class="card-title">Quick Search Antrean (No. Antrean)</div>
+            <div class="search-row">
+                <input type="text" id="searchQueueInput" placeholder="Contoh: A-008...">
+                <button type="button" id="btnSearchQueue" class="btn-search-action">Cari</button>
+            </div>
+        </div> <!-- Penutup card search -->
 
-                        <!-- Statistics Row Card -->
-                        <div class="stats-row">
-                            <div class="stat-box border-purple">
-                                <div class="stat-label">TOTAL PASIEN HARI INI</div>
-                                <div class="stat-value">128</div>
-                            </div>
-                            <div class="stat-box border-blue">
-                                <div class="stat-label">BRIDGING BERHASIL</div>
-                                <div class="stat-value">94%</div>
-                            </div>
-                        </div>
+        <!-- Statistics Row Card -->
+        <div class="stats-row">
+            <div class="stat-box border-purple">
+                <div class="stat-label">TOTAL PASIEN</div>
+                <div class="stat-value" id="totalPatients">0</div>
+            </div>
+            <div class="stat-box border-blue">
+                <div class="stat-label">BRIDGING BERHASIL</div>
+                <div class="stat-value">94%</div>
+            </div>
+        </div> <!-- Penutup stats-row -->
 
-                        <!-- BPJS Vclaim Action Card -->
-                        <div class="card">
-                            <div class="vclaim-card-header">
-                                <span class="vclaim-title">Cek Rujukan & SEP</span>
-                                <span class="tag-connected">TERHUBUNG</span>
-                            </div>
-                            <div class="input-group" style="margin-bottom: 12px;">
-                                <label style="font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">NO. KARTU BPJS</label>
-                                <div class="vclaim-input-wrapper">
-                                    <input type="text" value="000123456789">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </div>
-                            </div>
-                            <button class="btn-block-blue">Terbitkan SEP Baru</button>
-                        </div>
-
-                    </div>
-
-                    <!-- RIGHT TABLE & LIST -->
-                    <div class="right-list-container">
-                        
-                        <div class="table-filter-header">
-                            <h3>Daftar Antrean Hari Ini</h3>
-                            <select class="select-filter">
-                                <option>Semua Poliklinik</option>
-                            </select>
-                        </div>
-
-                        <!-- Table -->
-                       <!-- Cari bagian table di index.html Anda dan pastikan bentuknya seperti ini -->
-                        <table class="queue-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 100px;">NO. ANTREAN</th>
-                                    <th>PASIEN / RM</th>
-                                    <th>PENJAMIN</th>
-                                    <th>KLINIK / DPJP</th>
-                                    <th>STATUS</th>
-                                    <th style="text-align: center; width: 60px;">AKSI</th>
-                                </tr>
-                            </thead>
-                            <!-- Biarkan kosong, akan diisi otomatis oleh script.js -->
-                            <tbody id="queueTableBody"></tbody>
-                        </table>
-
-                        <!-- Pagination -->
-                        <div class="pagination-row">
-                            <span style="color: var(--text-muted); font-size: 12px;">Menampilkan 1-4 dari 48 antrean</span>
-                            <div class="pagination-pages">
-                                <button class="btn-page">Sebelumnya</button>
-                                <button class="btn-page active">1</button>
-                                <button class="btn-page">2</button>
-                                <button class="btn-page">Berikutnya</button>
-                            </div>
-                        </div>
-
-                    </div>
-
+        <!-- BPJS Vclaim Action Card -->
+        <div class="card">
+            <div class="vclaim-card-header">
+                <span class="vclaim-title">Cek Rujukan & SEP</span>
+                <span class="tag-connected">TERHUBUNG</span>
+            </div>
+            <div class="input-group" style="margin-bottom: 12px;">
+                <label style="font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">NO. KARTU BPJS</label>
+                <div class="vclaim-input-wrapper">
+                    <input type="text" value="000123456789">
+                    <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
+            </div>
+            <button class="btn-block-blue">Terbitkan SEP Baru</button>
+        </div> <!-- Penutup card BPJS -->
 
+    </div> <!-- Penutup left-controls (SANGAT PENTING!) -->
+
+    <!-- RIGHT TABLE & LIST (Kolom Kanan) -->
+    <div class="right-list-container">
+        
+        <div class="table-filter-header">
+            <h3>Daftar Antrean Hari Ini</h3>
+            <select class="select-filter">
+                <option>Semua Poliklinik</option>
+            </select>
+        </div>
+
+        <!-- Table -->
+        <table class="queue-table">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">NO. ANTREAN</th>
+                    <th>PASIEN / RM</th>
+                    <th>PENJAMIN</th>
+                    <th>KLINIK / DPJP</th>
+                    <th>STATUS</th>
+                    <th style="text-align: center; width: 60px;">AKSI</th>
+                </tr>
+            </thead>
+            <tbody id="queueTableBody"></tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination-row">
+            <span id="paginationInfo" style="color: var(--text-muted); font-size: 12px;">Menampilkan 0 dari 0 antrean</span>
+            <div class="pagination-pages" id="paginationContainer"></div>
+        </div>
+
+    </div> <!-- Penutup right-list-container -->
+
+</div> <!-- Penutup main-dashboard-grid -->
+
+                    
                 <!-- BOTTOM INTEGRATION STATUS ROW -->
                 <div class="bottom-integration-row">
                     <div class="integration-card border-green">

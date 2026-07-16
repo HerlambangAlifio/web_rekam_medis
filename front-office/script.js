@@ -9,67 +9,166 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     const queueTableBody = document.querySelector('#queueTableBody');
+    const paginationContainer = document.querySelector('#paginationContainer');
+    const paginationInfo = document.querySelector('#paginationInfo');
+
+    // =========================================================
+    // VARIABEL GLOBAL UNTUK PAGINATION & PENCARIAN
+    // =========================================================
+    let allQueueData = [];      // Menyimpan seluruh data asli dari database
+    let filteredData = [];      // Menyimpan data setelah difilter (pencarian)
+    let currentPage = 1;        // Halaman aktif saat ini
+    const rowsPerPage = 5;      // Batasan jumlah antrean per halaman (bisa diubah sesuai keinginan)
 
     // Pewarnaan label berdasarkan data penjamin dari database
     const getInsuranceClass = function(insurance) {
-        if (insurance.includes('BPJS')) return 'bpjs-pbi';
+        if (insurance && insurance.includes('BPJS')) return 'bpjs-pbi';
         if (insurance === 'UMUM') return 'umum';
         return 'swasta';
     };
 
-    // Pewarnaan status berdasarkan data dari database
+    // Pewarnaan status berdasarkan data dari database (perbaikan bug 'status_antrean')
     const getStatusClass = function(status) {
         return status === 'Selesai' ? 'done' : 'waiting';
     };
 
     // =========================================================
-    // READ: AMBIL DATA DARI DATABASE (MENGGANTIKAN DATA DUMMY)
+    // FUNGSI RENDER DATA HANYA UNTUK HALAMAN AKTIF
     // =========================================================
-    const renderQueue = function() {
+    const displayTableData = function(page) {
         if (!queueTableBody) return;
 
-        // Ambil data langsung dari endpoint API PHP
+        currentPage = page;
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        
+        // Potong data sesuai batasan halaman (misal: indeks 0 sampai 5)
+        const paginatedItems = filteredData.slice(start, end);
+
+        if (paginatedItems.length === 0) {
+            queueTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Belum ada antrean untuk ditampilkan.</td></tr>`;
+            if (paginationInfo) paginationInfo.textContent = "Menampilkan 0 dari 0 antrean";
+            return;
+        }
+
+        // Render baris tabel HTML
+        queueTableBody.innerHTML = paginatedItems.map(function(item) {
+            // Perbaikan: Jika database Anda menggunakan status_periksa, gunakan itu sebagai cadangan
+            const statusText = item.status_antrean || item.status_periksa || "Menunggu Perawat";
+            
+            return `
+                <tr>
+                    <td class="queue-id">${item.no_antrean}</td>
+                    <td class="patient-cell">
+                        <strong>${item.nama_pasien}</strong>
+                        <span>RM: ${item.no_rm}</span>
+                    </td>
+                    <td><span class="tag-insurance ${getInsuranceClass(item.penjamin)}">${item.penjamin}</span></td>
+                    <td class="doctor-cell">
+                        <strong>${item.klinik}</strong>
+                        <span>${item.dpjp}</span>
+                    </td>
+                    <td><span class="status-pill ${getStatusClass(statusText)}">${statusText}</span></td>
+                    <td style="text-align: center;">
+                        <button class="btn-edit-action" type="button" data-id="${item.no_antrean}">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        // Teks info baris (Contoh: Menampilkan 1-5 dari 12 antrean)
+        if (paginationInfo) {
+            const actualEnd = Math.min(end, filteredData.length);
+            paginationInfo.textContent = `Menampilkan ${start + 1}-${actualEnd} dari ${filteredData.length} antrean`;
+        }
+
+        // Re-attach event listener tombol edit
+        queueTableBody.querySelectorAll('.btn-edit-action').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                alert('Fitur ubah status atau edit untuk antrean ' + id + ' siap dikembangkan.');
+            });
+        });
+    };
+
+    // =========================================================
+    // FUNGSI BUAT TOMBOL PAGINATION SECARA DINAMIS
+    // =========================================================
+    const setupPagination = function() {
+        if (!paginationContainer) return;
+        paginationContainer.innerHTML = "";
+
+        const pageCount = Math.ceil(filteredData.length / rowsPerPage);
+        if (pageCount <= 1) return; // Jika halaman hanya 1, tidak perlu tombol halaman
+
+        // 1. Tombol "Sebelumnya"
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'btn-page';
+        prevBtn.textContent = 'Sebelumnya';
+        if (currentPage === 1) prevBtn.disabled = true;
+        prevBtn.addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayTableData(currentPage);
+                setupPagination();
+            }
+        });
+        paginationContainer.appendChild(prevBtn);
+
+        // 2. Tombol Angka Halaman (1, 2, 3, dst.)
+        for (let i = 1; i <= pageCount; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `btn-page ${currentPage === i ? 'active' : ''}`;
+            pageBtn.textContent = i;
+            pageBtn.addEventListener('click', function() {
+                displayTableData(i);
+                setupPagination();
+            });
+            paginationContainer.appendChild(pageBtn);
+        }
+
+        // 3. Tombol "Berikutnya"
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn-page';
+        nextBtn.textContent = 'Berikutnya';
+        if (currentPage === pageCount) nextBtn.disabled = true;
+        nextBtn.addEventListener('click', function() {
+            if (currentPage < pageCount) {
+                currentPage++;
+                displayTableData(currentPage);
+                setupPagination();
+            }
+        });
+        paginationContainer.appendChild(nextBtn);
+    };
+
+    // =========================================================
+    // READ: AMBIL DATA DARI DATABASE (LOAD AWAL)
+    // =========================================================
+    // =========================================================
+    // READ: AMBIL DATA DARI DATABASE (LOAD AWAL)
+    // =========================================================
+    const renderQueue = function() {
         fetch('api.php')
             .then(response => response.json())
             .then(res => {
                 if (res.status === 'success') {
-                    // Jika data kosong di database
-                    if (res.data.length === 0) {
-                        queueTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Belum ada antrean untuk hari ini.</td></tr>`;
-                        return;
+                    allQueueData = res.data;
+                    filteredData = [...allQueueData]; // Salin semua data ke variabel filter
+                    
+                    // --- TAMBAHKAN KODE INI DI SINI ---
+                    const totalPatientsEl = document.querySelector('#totalPatients');
+                    if (totalPatientsEl) {
+                        // Menghitung jumlah total baris pendaftaran yang ada di database
+                        totalPatientsEl.textContent = allQueueData.length;
                     }
+                    // ----------------------------------
 
-                    // Tampilkan data dinamis dari database ke dalam tabel
-                    queueTableBody.innerHTML = res.data.map(function(item) {
-                        return `
-                            <tr>
-                                <td class="queue-id">${item.no_antrean}</td>
-                                <td class="patient-cell">
-                                    <strong>${item.nama_pasien}</strong>
-                                    <span>RM: ${item.no_rm}</span>
-                                </td>
-                                <td><span class="tag-insurance ${getInsuranceClass(item.penjamin)}">${item.penjamin}</span></td>
-                                <td class="doctor-cell">
-                                    <strong>${item.klinik}</strong>
-                                    <span>${item.dpjp}</span>
-                                </td>
-                                <td><span class="status-pill ${getStatusClass(item.status_antrean)}">${item.status_antrean}</span></td>
-                                <td style="text-align: center;">
-                                    <button class="btn-edit-action" type="button" data-id="${item.no_antrean}">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-
-                    // Re-attach event listener untuk tombol edit dinamis jika diperlukan
-                    queueTableBody.querySelectorAll('.btn-edit-action').forEach(function(btn) {
-                        btn.addEventListener('click', function() {
-                            const id = this.getAttribute('data-id');
-                            alert('Fitur ubah status atau edit untuk antrean ' + id + ' siap dikembangkan.');
-                        });
-                    });
+                    currentPage = 1; // Kembali ke halaman pertama
+                    displayTableData(currentPage);
+                    setupPagination();
                 } else {
                     console.error("Gagal memuat data dari server:", res.message);
                 }
@@ -79,6 +178,32 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Jalankan pemanggilan data pertama kali saat halaman dimuat
     renderQueue();
+
+
+    // =========================================================
+    // INTEGRASI FITUR PENCARIAN DENGAN PAGINATION
+    // =========================================================
+    const searchInput = document.querySelector('#searchQueueInput');
+    const btnSearch = document.querySelector('#btnSearchQueue');
+
+    const performSearch = function() {
+        if (!searchInput) return;
+        const keyword = searchInput.value.toUpperCase().trim();
+
+        // Saring data dari array utama
+        filteredData = allQueueData.filter(function(item) {
+            const queueNo = item.no_antrean.toUpperCase();
+            return queueNo.includes(keyword);
+        });
+
+        currentPage = 1; // Reset ke halaman 1 saat pencarian baru dilakukan
+        displayTableData(currentPage);
+        setupPagination();
+    };
+
+    if (btnSearch) btnSearch.addEventListener('click', performSearch);
+    if (searchInput) searchInput.addEventListener('input', performSearch);
+
 
     // =========================================================
     // CREATE: LOGIKA MODAL INPUT & SIMPAN KE DATABASE
@@ -121,25 +246,24 @@ document.addEventListener("DOMContentLoaded", function() {
                             <option value="ASURANSI SWASTA">ASURANSI SWASTA</option>
                         </select>
                     </label>
-                 <label>
-    <span>Klinik</span>
-    <select name="clinic" required>
-        <option value="">Pilih Poliklinik</option>
-        <option value="1">Poli Umum</option>
-        <option value="2">Poli Gigi</option>
-        <option value="3">Poli Anak</option>
-        <option value="4">Poli Kandungan</option>
-    </select>
-</label>
-
-<label>
-    <span>DPJP</span>
-    <select name="dpjp" required>
-        <option value="">Pilih Dokter</option>
-        <option value="1">dr. Andi</option>
-        <option value="2">dr. Budi</option>
-    </select>
-</label>
+                    <label>
+                        <span>Klinik</span>
+                        <select name="clinic" required>
+                            <option value="">Pilih Poliklinik</option>
+                            <option value="1">Poli Umum</option>
+                            <option value="2">Poli Gigi</option>
+                            <option value="3">Poli Anak</option>
+                            <option value="4">Poli Kandungan</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>DPJP</span>
+                        <select name="dpjp" required>
+                            <option value="">Pilih Dokter</option>
+                            <option value="1">dr. Andi</option>
+                            <option value="2">dr. Budi</option>
+                        </select>
+                    </label>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline-blue modal-cancel">Batal</button>
@@ -169,7 +293,6 @@ document.addEventListener("DOMContentLoaded", function() {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            // Ambil data kiriman dari elemen input form
             const dataObj = {
                 queueNumber: form.queueNumber.value,
                 patientName: form.patientName.value,
@@ -179,7 +302,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 dpjp: form.dpjp.value
             };
 
-            // Kirim data terstruktur dalam bentuk JSON string ke api.php via POST
             fetch('api.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -191,7 +313,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     alert(result.message);
                     form.reset();
                     closeModal();
-                    renderQueue(); // Segera segarkan tabel agar data terbaru dari database langsung naik
+                    renderQueue(); // Memuat ulang data dari database & memperbarui halaman
                 } else {
                     alert("Gagal mendaftarkan pasien: " + result.message);
                 }
