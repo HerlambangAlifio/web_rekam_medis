@@ -171,3 +171,123 @@ if ($method === 'POST') {
 
     exit;
 }
+/* =========================
+   DAFTAR / EDIT PASIEN
+========================= */
+
+if ($method === 'POST') {
+
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    if (
+        empty($input['queueNumber']) ||
+        empty($input['patientName']) ||
+        empty($input['no_rm']) ||
+        empty($input['insurance']) ||
+        empty($input['clinic']) ||
+        empty($input['dpjp'])
+    ){
+        echo json_encode([
+            "status"=>"error",
+            "message"=>"Data registrasi tidak lengkap."
+        ]);
+        exit;
+    }
+
+    $queueNumber = trim($input['queueNumber']);
+    $patientName = trim($input['patientName']);
+    $noRm        = trim($input['no_rm']);
+    $insurance   = trim($input['insurance']);
+    $idPoli      = intval($input['clinic']);
+    $idDokter    = intval($input['dpjp']);
+    $today       = date("Y-m-d");
+
+    // Cek apakah ada id_daftar yang dikirim (berarti mode EDIT / Pasien Lama)
+    $idDaftar    = isset($input['id_daftar']) ? intval($input['id_daftar']) : null;
+
+    try{
+        /* 1. Update/Insert Master Data Pasien */
+        $cek = $pdo->prepare("SELECT no_rm FROM pasien WHERE no_rm=?");
+        $cek->execute([$noRm]);
+
+        if($cek->rowCount() == 0){
+            $insertPasien = $pdo->prepare("INSERT INTO pasien (no_rm, nama_pasien) VALUES (?,?)");
+            $insertPasien->execute([$noRm, $patientName]);
+        } else {
+            $updatePasien = $pdo->prepare("UPDATE pasien SET nama_pasien=? WHERE no_rm=?");
+            $updatePasien->execute([$patientName, $noRm]);
+        }
+
+        /* 2. Cek Mode: UPDATE Antrean Lama ATAU INSERT Antrean Baru */
+        if ($idDaftar) {
+            // MODE EDIT (PASIEN LAMA): Mengubah data antrean yang sudah ada
+            $update = $pdo->prepare("
+                UPDATE pendaftaran_rajal
+                SET 
+                    no_antrean = ?,
+                    no_rm = ?,
+                    id_poli = ?,
+                    id_dokter = ?,
+                    penjamin = ?
+                WHERE id_daftar = ?
+            ");
+
+            $update->execute([
+                $queueNumber,
+                $noRm,
+                $idPoli,
+                $idDokter,
+                $insurance,
+                $idDaftar
+            ]);
+
+            $message = "Data pendaftaran pasien berhasil diperbarui.";
+
+        } else {
+            // MODE BARU: Tambah baris antrean baru
+            $insert = $pdo->prepare("
+                INSERT INTO pendaftaran_rajal
+                (
+                    no_antrean,
+                    no_rm,
+                    id_poli,
+                    id_dokter,
+                    penjamin,
+                    status_periksa,
+                    tanggal_kunjungan
+                )
+                VALUES
+                (
+                    ?, ?, ?, ?, ?,
+                    'Menunggu Perawat',
+                    ?
+                )
+            ");
+
+            $insert->execute([
+                $queueNumber,
+                $noRm,
+                $idPoli,
+                $idDokter,
+                $insurance,
+                $today
+            ]);
+
+            $message = "Pasien berhasil didaftarkan.";
+        }
+
+        echo json_encode([
+            "status"=>"success",
+            "message"=>$message
+        ]);
+
+    }
+    catch(Exception $e){
+        echo json_encode([
+            "status"=>"error",
+            "message"=>$e->getMessage()
+        ]);
+    }
+
+    exit;
+}

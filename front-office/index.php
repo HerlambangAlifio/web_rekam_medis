@@ -70,6 +70,7 @@
                     </div>
                     <div class="action-header-buttons">
                         <button class="btn btn-outline-blue"><i class="fa-solid fa-arrows-rotate"></i> Bridging BPJS Vclaim</button>
+                        <button class="btn btn-outline-blue btn-pasien-lama"><i class="fa-solid fa-address-book"></i> Registrasi Pasien Lama</button>
                         <button class="btn btn-teal"><i class="fa-solid fa-user-plus"></i> Registrasi Pasien Baru</button>
                     </div>
                 </div>

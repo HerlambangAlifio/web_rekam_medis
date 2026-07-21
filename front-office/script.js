@@ -205,24 +205,43 @@ document.addEventListener("DOMContentLoaded", function() {
     if (searchInput) searchInput.addEventListener('input', performSearch);
 
 
-    // =========================================================
+   // =========================================================
     // CREATE: LOGIKA MODAL INPUT & SIMPAN KE DATABASE
     // =========================================================
-    const btnNewPatient = document.querySelector('.action-header-buttons .btn-teal');
+    const btnNewPatient = document.querySelector('.action-header-buttons .btn-pasien-baru, .action-header-buttons .btn-teal');
+    const btnOldPatient = document.querySelector('.action-header-buttons .btn-pasien-lama');
+
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'modal-overlay';
     modalOverlay.innerHTML = `
         <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <div class="modal-header">
                 <div>
-                    <h3 id="modal-title">Registrasi Pasien Baru</h3>
-                    <p>Isi data antrean pasien baru di bawah ini.</p>
+                    <h3 id="modal-title">Pendaftaran Pasien</h3>
+                    <p>Pilih tipe pendaftaran dan isi data antrean pasien di bawah ini.</p>
                 </div>
                 <button class="modal-close" type="button" aria-label="Tutup">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
+
+            <!-- TOGGLE TAB PASIEN BARU / LAMA -->
+            <div class="modal-tab-wrapper">
+                <button type="button" class="tab-btn active" id="tabBaru">Pasien Baru</button>
+                <button type="button" class="tab-btn" id="tabLama">Pasien Lama</button>
+            </div>
+
             <form class="modal-form">
+                <!-- FITUR PENCARIAN KHUSUS PASIEN LAMA -->
+                <div id="searchPasienLamaSection" class="search-pasien-lama-box" style="display: none;">
+                    <label style="font-weight: 600; font-size: 12px; margin-bottom: 4px; display: block;">Cari Data Pasien Lama</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="searchPasienInput" placeholder="Masukkan No. RM atau Nama Pasien..." style="flex: 1; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; font-size: 13px;">
+                        <button type="button" id="btnCariPasien" class="btn btn-teal" style="padding: 8px 14px;"><i class="fa-solid fa-magnifying-glass"></i> Cari</button>
+                    </div>
+                    <small id="searchStatusMsg" style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;"></small>
+                </div>
+
                 <div class="form-grid">
                     <label>
                         <span>No. Antrean</span>
@@ -230,11 +249,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     </label>
                     <label>
                         <span>Nama Pasien</span>
-                        <input name="patientName" type="text" placeholder="Masukkan nama pasien" required>
+                        <input name="patientName" id="inputPatientName" type="text" placeholder="Masukkan nama pasien" required>
                     </label>
                     <label>
                         <span>No. RM</span>
-                        <input name="patientRm" type="text" placeholder="Contoh: 12-34-56" required>
+                        <input name="patientRm" id="inputPatientRm" type="text" placeholder="Contoh: 12-34-56" required>
                     </label>
                     <label>
                         <span>Penjamin</span>
@@ -275,12 +294,76 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.body.appendChild(modalOverlay);
 
-    const closeModal = function() { modalOverlay.classList.remove('active'); };
-    const openModal = function() { modalOverlay.classList.add('active'); };
+    // Variabel elemen modal
+    const tabBaru = modalOverlay.querySelector('#tabBaru');
+    const tabLama = modalOverlay.querySelector('#tabLama');
+    const searchSection = modalOverlay.querySelector('#searchPasienLamaSection');
+    const inputName = modalOverlay.querySelector('#inputPatientName');
+    const inputRm = modalOverlay.querySelector('#inputPatientRm');
+    const btnCariPasien = modalOverlay.querySelector('#btnCariPasien');
+    const searchPasienInput = modalOverlay.querySelector('#searchPasienInput');
+    const searchStatusMsg = modalOverlay.querySelector('#searchStatusMsg');
 
-    if (btnNewPatient) {
-        btnNewPatient.addEventListener('click', openModal);
-    }
+    // Fungsi Pengalih Tab Pasien Baru / Lama
+    const switchTab = function(type) {
+        if (type === 'baru') {
+            tabBaru.classList.add('active');
+            tabLama.classList.remove('active');
+            searchSection.style.display = 'none';
+            inputName.readOnly = false;
+            inputRm.readOnly = false;
+            inputName.value = '';
+            inputRm.value = '';
+            searchStatusMsg.textContent = '';
+        } else {
+            tabLama.classList.add('active');
+            tabBaru.classList.remove('active');
+            searchSection.style.display = 'block';
+            inputName.readOnly = true;
+            inputRm.readOnly = true;
+            inputName.value = '';
+            inputRm.value = '';
+            searchStatusMsg.textContent = 'Ketik No. RM atau nama pasien lalu klik Cari.';
+        }
+    };
+
+    tabBaru.addEventListener('click', () => switchTab('baru'));
+    tabLama.addEventListener('click', () => switchTab('lama'));
+
+    // Fitur Cari Pasien Lama dari Array / Database Lokal
+    btnCariPasien.addEventListener('click', function() {
+        const keyword = searchPasienInput.value.trim().toLowerCase();
+        if (!keyword) {
+            searchStatusMsg.style.color = '#ef4444';
+            searchStatusMsg.textContent = 'Harap isi kata kunci pencarian!';
+            return;
+        }
+
+        // Mencari dari data antrean/pasien yang ada
+        const matched = allQueueData.find(item => 
+            item.no_rm.toLowerCase().includes(keyword) || 
+            item.nama_pasien.toLowerCase().includes(keyword)
+        );
+
+        if (matched) {
+            inputName.value = matched.nama_pasien;
+            inputRm.value = matched.no_rm;
+            searchStatusMsg.style.color = '#22c55e';
+            searchStatusMsg.textContent = `Pasien ditemukan: ${matched.nama_pasien} (${matched.no_rm})`;
+        } else {
+            searchStatusMsg.style.color = '#ef4444';
+            searchStatusMsg.textContent = 'Data pasien tidak ditemukan.';
+        }
+    });
+
+    const closeModal = function() { modalOverlay.classList.remove('active'); };
+    const openModal = function(type = 'baru') { 
+        switchTab(type);
+        modalOverlay.classList.add('active'); 
+    };
+
+    if (btnNewPatient) btnNewPatient.addEventListener('click', () => openModal('baru'));
+    if (btnOldPatient) btnOldPatient.addEventListener('click', () => openModal('lama'));
 
     modalOverlay.addEventListener('click', function(event) {
         if (event.target === modalOverlay || event.target.closest('.modal-cancel') || event.target.closest('.modal-close')) {
@@ -313,7 +396,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     alert(result.message);
                     form.reset();
                     closeModal();
-                    renderQueue(); // Memuat ulang data dari database & memperbarui halaman
+                    renderQueue();
                 } else {
                     alert("Gagal mendaftarkan pasien: " + result.message);
                 }
