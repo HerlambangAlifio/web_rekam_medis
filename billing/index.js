@@ -156,53 +156,60 @@ function loadQueue(){
 
 
 
-function pilihPasien(id,card=null){
-
-    selectedPatient=id;
+function pilihPasien(id, card = null) {
+    selectedPatient = id;
 
     document.querySelectorAll(".patient-card")
-    .forEach(x=>x.classList.remove("active"));
+        .forEach(x => x.classList.remove("active"));
 
-    if(card){
-
+    if (card) {
         card.classList.add("active");
-
     }
 
-    fetch("get_resep.php?id_daftar="+id)
+    fetch("get_resep.php?id_daftar=" + id)
+        .then(res => res.json())
+        .then(data => {
+            const box = document.getElementById("resepContainer");
+            box.innerHTML = "";
 
-    .then(res=>res.json())
+            // Cek jika response sukses dan memiliki item resep
+            if (data.status === "success" && data.items && data.items.length > 0) {
+                
+                // Render setiap item obat
+                data.items.forEach(r => {
+                    box.innerHTML += `
+                        <div class="prescription-box mt-3">
+                            <div class="d-flex justify-between align-center">
+                                <strong>${r.nama_obat}</strong>
+                                <span class="bold text-primary">Rp ${r.subtotal.toLocaleString('id-ID')}</span>
+                            </div>
+                            <p class="subtext mt-2">
+                                ${r.signa} <br>
+                                Jumlah : ${r.jumlah} x Rp ${r.harga_satuan.toLocaleString('id-ID')}
+                            </p>
+                        </div>
+                    `;
+                });
 
-    .then(data=>{
+                // Render Total Pembayaran / Grand Total di bagian bawah resep
+                box.innerHTML += `
+                    <div class="total-banner mt-3">
+                        <span>Total Resep:</span>
+                        <span class="total-amount">Rp ${data.grand_total.toLocaleString('id-ID')}</span>
+                    </div>
+                `;
 
-        const box=document.getElementById("resepContainer");
-
-        box.innerHTML="";
-
-        data.forEach(r=>{
-
-            box.innerHTML+=`
-
-            <div class="prescription-box mt-3">
-
-                <strong>${r.nama_obat}</strong>
-
-                <p>
-
-                    ${r.signa}
-
-                    <br>
-
-                    Jumlah : ${r.jumlah}
-
-                </p>
-
-            </div>
-
-            `;
-
+            } else {
+                box.innerHTML = `
+                    <div class="prescription-box mt-3 text-center">
+                        <p class="text-muted">Tidak ada resep obat untuk pasien ini.</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(err => {
+            console.error("Error fetching resep:", err);
         });
-
-    });
-
 }
+    
+
