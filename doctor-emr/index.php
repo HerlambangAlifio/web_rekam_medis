@@ -91,7 +91,34 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card soap-card" style="margin-bottom: 16px; padding: 16px;">
+                        <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--teal-primary);">
+                            <i class="fa-solid fa-stethoscope"></i> Pemeriksaan Dokter (SOAP)
+                        </h3>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div>
+                                <label style="font-weight: 600; font-size: 11.5px; display: block; margin-bottom: 4px;">
+                                    Subjective (Keluhan / Anamnesis)
+                                </label>
+                                <textarea id="inputSubjective" class="soap-textarea" style="width:100%; height:60px; border:1px solid #e2e8f0; border-radius:6px; padding:8px;" placeholder="Keluhan utama pasien..."></textarea>
+                            </div>
 
+                            <div>
+                                <label style="font-weight: 600; font-size: 11.5px; display: block; margin-bottom: 4px;">
+                                    Assessment (Diagnosis / Masalah Medis)
+                                </label>
+                                <textarea id="inputAssessment" class="soap-textarea" style="width:100%; height:60px; border:1px solid #e2e8f0; border-radius:6px; padding:8px;" placeholder="Diagnosis dokter..."></textarea>
+                            </div>
+
+                            <div>
+                                <label style="font-weight: 600; font-size: 11.5px; display: block; margin-bottom: 4px;">
+                                    Plan (Rencana Tindakan / Edukasi)
+                                </label>
+                                <textarea id="inputPlan" class="soap-textarea" style="width:100%; height:50px; border:1px solid #e2e8f0; border-radius:6px; padding:8px;" placeholder="Rencana perawatan atau saran..."></textarea>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card prescription-card">
                         <div class="prescription-header">
                             <h3>E-Resep <button

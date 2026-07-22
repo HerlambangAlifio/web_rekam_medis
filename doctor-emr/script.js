@@ -111,6 +111,14 @@ document.addEventListener("click", function (e) {
 
 // Event listener untuk menyimpan resep
 document.getElementById("btnSaveResep").addEventListener("click", function () {
+    if (!selectedPatientId) {
+        alert("Silahkan pilih pasien terlebih dahulu.");
+        return;
+    }
+
+    const subjective = document.getElementById("inputSubjective").value;
+    const assessment = document.getElementById("inputAssessment").value;
+    const plan = document.getElementById("inputPlan").value;
     const resep = [];
 
     document.querySelectorAll("#tbodyResep tr").forEach(row => {
@@ -118,17 +126,20 @@ document.getElementById("btnSaveResep").addEventListener("click", function () {
         const signaInput = row.querySelector(".signa");
         const jumlahInput = row.querySelector(".jumlah");
 
-        // Memastikan element input ditemukan sebelum mengambil nilainya
+
+
         if (namaObatInput && signaInput && jumlahInput) {
-            resep.push({
-                nama_obat: namaObatInput.value,
-                signa: signaInput.value,
-                jumlah: jumlahInput.value
-            });
+            if (namaObatInput.value.trim() !== "") {
+                resep.push({
+                    nama_obat: namaObatInput.value,
+                    signa: signaInput.value,
+                    jumlah: jumlahInput.value
+                });
+            }
         }
     });
 
-    console.log(selectedPatientId);
+    
 
     fetch("save_resep.php", {
         method: "POST",
@@ -137,15 +148,19 @@ document.getElementById("btnSaveResep").addEventListener("click", function () {
         },
         body: JSON.stringify({
             id_daftar: selectedPatientId,
+            subjective: subjective,
+            assessment: assessment,
+            plan: plan,
             resep: resep
         })
     })
     .then(res => res.json())
     .then(res => {
-        if (res.status == "success") {
+        if (res.status === "success") {
             alert(res.message);
             selectedPatientId = null;
 
+            // Reset banner pasien
             document.getElementById("avatarPasien").innerHTML = "-";
             document.getElementById("namaPasien").innerHTML = "Belum ada pasien";
             document.getElementById("noRM").innerHTML = "No. RM : -";
@@ -156,17 +171,24 @@ document.getElementById("btnSaveResep").addEventListener("click", function () {
             document.getElementById("beratBadan").innerHTML = "-";
             document.getElementById("tinggiBadan").innerHTML = "-";
 
+            // Clear input SOAP
+            document.getElementById("inputSubjective").value = "";
+            document.getElementById("inputAssessment").value = "";
+            document.getElementById("inputPlan").value = "";
+
+            // Reset tabel resep
             if (tbodyResep) {
                 tbodyResep.innerHTML = "";
-                tambahBarisResep(); // Reset baris resep jadi kosong kembali
+                tambahBarisResep();
             }
 
+            // Muat ulang antrean
             loadQueue();
         } else {
             alert(res.message);
         }
     })
     .catch(err => {
-        console.error(err);
+        console.error("Error:", err);
     });
 }); // <--- Tanda penutup ini yang sebelumnya hilang di kode Anda
